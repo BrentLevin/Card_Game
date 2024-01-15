@@ -1,4 +1,6 @@
-class Creature():
+from random import shuffle
+
+class Creature:
     def __init__(self, name, cardtype, faction, power, toughness, colourless = 0, coloured = [], flash: bool = False, flying: bool = False):
         self.name = name
         self.colourless = colourless
@@ -9,20 +11,30 @@ class Creature():
         self.toughness = toughness
         self.flash = flash
         self.flying = flying
-    
-class Deck():
-    def __init__(self):
-        self.cards = []
 
-    def add_card(self, card):
-        self.cards.append(card)
+class Deck:
+    def __init__(self, deck_list):
+        self.cards = deck_list
 
-    def build_deck(self, card_list):
-        for i in card_list:
-            self.add_card(i)
+    def shuffle(self):
+        self.cards = random.shuffle(self.cards)
+
+
+class Hand(Deck):
+    def __init__(self, hand_size = 0, hand = []):
+        self.hand_size = hand_size
+        self.hand = hand
+
+    def draw_starting_hand(self):
+        self.hand = self.hand.append(Deck.pop())
+
+    def draw(self):
+        hand.append(self.cards.pop())
+
+
 
     #need something to import a deck list
-        
+
 
 restoration_angel = Creature(name = "Restoration Angel"
                         , cardtype = "Creature"
@@ -47,22 +59,22 @@ high_sentinels_of_arashin = Creature(name = "High Sentinels of Arashin"
                         )
 
 
-my_deck = Deck()
 
-deck_list = [high_sentinels_of_arashin,restoration_angel]
+deck_list = [
+    high_sentinels_of_arashin
+    , restoration_angel
+    ]
 
-my_deck.build_deck(deck_list)
+my_deck = Deck(deck_list)
 
-# for i in deck_list:
-#     my_deck.add_card(i)
 
 def main():
     # print(vars(RestorationAngel))
     # print(str(my_deck.cards()))
+    print(random.shuffle([1,2,3,4,5]))
     for obj in my_deck.cards:
-        print(obj.name)
+        print(shuffle(obj.name))
 
 
 if __name__ == "__main__":
     main()
-
