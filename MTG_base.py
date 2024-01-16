@@ -1,5 +1,4 @@
 import random
-import MTG.Cards.py
 
 class Creature:
     def __init__(self, name, faction, power, toughness, cardtype = "Creature", colourless = 0, coloured = [], flash: bool = False, flying: bool = False, tapped = False, summoning_sickness = True):
@@ -97,37 +96,8 @@ class turn(turn_interactions):
 
     #need something to import a deck list
 
-
-
-
-deck_list = [
-    high_sentinels_of_arashin
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    ]
-
-deck_size = len(deck_list)
-
-my_deck = Deck(deck_list, deck_size)
-
-
 def main():
-    # print(vars(restoration_angel))
-    # print(str(my_deck.cards()))
-    my_deck.shuffle_cards() 
-    # for obj in my_deck.cards:
-    #     print(obj.name)
-    my_deck.draw_starting_hand()
-    for obj in my_deck.hand:
-        print(obj.name)
+    pass
 
 if __name__ == "__main__":
     main()
