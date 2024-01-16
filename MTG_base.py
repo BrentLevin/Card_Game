@@ -1,7 +1,8 @@
-from random import shuffle
+import random
+import MTG.Cards.py
 
 class Creature:
-    def __init__(self, name, cardtype, faction, power, toughness, colourless = 0, coloured = [], flash: bool = False, flying: bool = False):
+    def __init__(self, name, faction, power, toughness, cardtype = "Creature", colourless = 0, coloured = [], flash: bool = False, flying: bool = False, tapped = False, summoning_sickness = True):
         self.name = name
         self.colourless = colourless
         self.coloured = coloured
@@ -11,70 +12,122 @@ class Creature:
         self.toughness = toughness
         self.flash = flash
         self.flying = flying
-
-class Deck:
-    def __init__(self, deck_list):
-        self.cards = deck_list
-
-    def shuffle(self):
-        self.cards = random.shuffle(self.cards)
+        self.tapped = tapped
+        self.summoning_sickness = summoning_sickness
 
 
-class Hand(Deck):
+class BasicLand:
+    def __init__(self, name, colour, cardtype = "BasicLand"):
+        self.name = name
+        self.colour = colour
+        self.cardtype = cardtype
+
+class NonBasicLand:
+    def __init__(self, name, faction, cardtype = "NonBasicLand", colourless = 0, coloured = [], tapped = False):
+        self.name = name
+        self.colourless = colourless
+        self.coloured = coloured
+        self.cardtype = cardtype
+        self.faction = faction
+        self.tapped = tapped
+        # how to deal with dual lands
+        # how to deal with land abilities and transformations
+
+class Hand:
     def __init__(self, hand_size = 0, hand = []):
         self.hand_size = hand_size
         self.hand = hand
 
-    def draw_starting_hand(self):
-        self.hand = self.hand.append(Deck.pop())
+class Deck(Hand):
+    def __init__(self, deck_list, deck_size):
+        self.cards = deck_list
+        self.deck_size = deck_size
+        super().__init__()
 
-    def draw(self):
-        hand.append(self.cards.pop())
+    def shuffle_cards(self):
+        random.shuffle(self.cards)
 
+    def draw(self, number):
+        for i in range(number):
+            self.hand.append(self.cards.pop())
+        self.hand_size = len(self.hand)
 
+    def draw_starting_hand(self, starting_size = 7):
+        self.draw(starting_size)
+
+  
+
+class turn_interactions:
+    def upkeep(self):
+        #untap everything and draw a card
+        #change who's turn it is
+        # change summoning sickness to false
+        self.draw(1)
+
+    def mainphase1(self):
+        #play cards
+        pass 
+
+    def declare_attackers(self):
+        #choose attackes and their opponents
+        pass
+
+    def declare_blockers(self):
+        #opponent chooses blockers
+        pass
+    
+    def declare_blockers(self):
+        #opponent chooses blockers
+        pass
+
+    def mainphase2(self):
+        pass
+
+    def endstep(self):
+        pass
+    
+class turn(turn_interactions):
+    #maybe i could put whose turn it is in here
+    def run_turn(self):
+        self.upkeep()
+        self.mainphase1()
+        self.declare_attackers()
+        self.mainphase2()
+        self.endstep()
 
     #need something to import a deck list
 
-
-restoration_angel = Creature(name = "Restoration Angel"
-                        , cardtype = "Creature"
-                        , colourless = 3
-                        , coloured = ["w"]
-                        , faction = "Angel"
-                        , power = 3
-                        , toughness = 4
-                        , flash = True
-                        , flying = True
-                        )
-
-high_sentinels_of_arashin = Creature(name = "High Sentinels of Arashin"
-                        , cardtype = "Creature"
-                        , colourless = 3
-                        , coloured = ["w"]
-                        , faction = "Angel"
-                        , power = 3
-                        , toughness = 4
-                        , flash = True
-                        , flying = True
-                        )
 
 
 
 deck_list = [
     high_sentinels_of_arashin
     , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
+    , restoration_angel
     ]
 
-my_deck = Deck(deck_list)
+deck_size = len(deck_list)
+
+my_deck = Deck(deck_list, deck_size)
 
 
 def main():
-    # print(vars(RestorationAngel))
+    # print(vars(restoration_angel))
     # print(str(my_deck.cards()))
-    print(random.shuffle([1,2,3,4,5]))
-    for obj in my_deck.cards:
-        print(shuffle(obj.name))
-
+    my_deck.shuffle_cards() 
+    # for obj in my_deck.cards:
+    #     print(obj.name)
+    my_deck.draw_starting_hand()
+    for obj in my_deck.hand:
+        print(obj.name)
 
 if __name__ == "__main__":
     main()
