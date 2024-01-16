@@ -33,21 +33,22 @@ class NonBasicLand:
         # how to deal with land abilities and transformations
 
 class Hand:
-    def __init__(self, hand_size = 0, hand = []):
-        self.hand_size = hand_size
+    def __init__(self, hand = []):
         self.hand = hand
+        self.hand_size = len(self.hand)
 
 class Deck(Hand):
-    def __init__(self, deck_list, deck_size):
+    def __init__(self, deck_list):
         self.cards = deck_list
-        self.deck_size = deck_size
+        self.deck_size = len(deck_list)
         super().__init__()
 
     def shuffle_cards(self):
         random.shuffle(self.cards)
 
     def draw(self, number):
-        for i in range(number):
+        print("enterred")
+        for _ in range(number):
             self.hand.append(self.cards.pop())
         self.hand_size = len(self.hand)
 

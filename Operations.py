@@ -1,34 +1,54 @@
 from MTG_base import *
 from Cards import *
 
-deck_list = [
+deck_list1 = [
     high_sentinels_of_arashin
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    , restoration_angel
-    ]
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+]
 
-deck_size = len(deck_list)
+deck_list2 = [
+    restoration_angel
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , restoration_angel
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+    , Plains
+]
 
-my_deck = Deck(deck_list, deck_size)
-
+my_deck = Deck(deck_list1)
+opponents_deck = Deck(deck_list2)
 
 def main():
-    # print(vars(restoration_angel))
-    # print(str(my_deck.cards()))
     my_deck.shuffle_cards() 
-    # for obj in my_deck.cards:
-    #     print(obj.name)
+    opponents_deck.shuffle_cards()
+
+    # print(opponents_deck.hand_size)
+    # print(opponents_deck.hand)
+
     my_deck.draw_starting_hand()
-    for obj in my_deck.hand:
-        print(obj.name)
+    print(my_deck.hand_size)
+    print(my_deck.hand)
+
+    # opponents_deck.draw_starting_hand()
+    # print(opponents_deck.hand_size)
+    # print(opponents_deck.hand)
+
+    opponents_deck.draw_starting_hand()
+    print(my_deck.hand_size)
+    print(my_deck.hand)
 
 if __name__ == "__main__":
     main()

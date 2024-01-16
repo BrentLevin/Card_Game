@@ -1,4 +1,4 @@
-from MTG_base import Creature, BasicLand, NonBasicLand
+from MTG_base import *
 
 restoration_angel = Creature(name = "Restoration Angel"
                         , colourless = 3
