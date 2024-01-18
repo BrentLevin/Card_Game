@@ -34,8 +34,8 @@ class NonBasicLand:
 
 class Hand:
     def __init__(self):
-        self.hand = [] # if there is errors with this just put the if statement in
-        self.hand_size = len(self.hand)
+        self.hand = {} # if there is errors with this just put the if statement in
+        # self.hand_size = len(self.hand) #Better to represent hand as a dictionary?
 
 class Deck(Hand):
     def __init__(self, deck_list):
@@ -48,14 +48,24 @@ class Deck(Hand):
 
     def draw(self, number):
         for _ in range(number):
-            self.hand.append(self.deck.pop()) # list comprehension
+            if self.deck[-1] in self.hand.keys():
+                self.hand[self.deck.pop()] += 1
+            else:
+                self.hand[self.deck.pop()] = 1
             self.deck_size = len(self.deck) #this might be wrong
-        self.hand_size = len(self.hand)
+        # self.hand_size = len(self.hand)
 
     def draw_starting_hand(self, starting_size = 7):
         self.draw(starting_size)
 
-  
+class BattleField:
+    pass
+
+class Graveyard:
+    pass
+
+class Exile:
+    pass
 
 class turn_interactions:
         

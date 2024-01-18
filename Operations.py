@@ -50,8 +50,8 @@ def main():
     print(round.opponents_deck.deck)
     print(round.whose_turn)
 
-    for i in round.opponents_deck.hand:
-        print(i.name)
+    for obj, value in round.opponents_deck.hand.items():
+        print(obj.name, value)
 
 if __name__ == "__main__":
     main()
