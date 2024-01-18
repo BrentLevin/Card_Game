@@ -124,41 +124,8 @@ class Game(Deck, turn_interactions):
         self.mainphase2()
         self.endstep(self.whose_turn)
 
-my_deck_list = [
-    1
-    ,2
-    ,3
-    ,4
-    ,5
-    ,6
-    ,7
-    ,8
-]
-
-opp_deck_list = [
-    101
-    ,102
-    ,103
-    ,104
-    ,105
-    ,106
-    ,107
-    ,108
-]
-
-
 def main():
-    round = Game(my_deck_list, opp_deck_list)
-    round.start_game()
-    print(round.whose_turn)
-    round.run_turn()
-    print(round.whose_turn)
-
-
-    round.run_turn()
-    print(round.my_deck.deck)
-    print(round.opponents_deck.deck)
-    print(round.whose_turn)
+    pass
 
 if __name__ == "__main__":
     main()
