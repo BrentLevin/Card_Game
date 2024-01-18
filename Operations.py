@@ -28,27 +28,11 @@ deck_list2 = [
     , Plains
 ]
 
-my_deck = Deck(deck_list1)
-opponents_deck = Deck(deck_list2)
+
 
 def main():
-    my_deck.shuffle_cards() 
-    opponents_deck.shuffle_cards()
-
-    # print(opponents_deck.hand_size)
-    # print(opponents_deck.hand)
-
-    my_deck.draw_starting_hand()
-    print(my_deck.hand_size)
-    print(my_deck.hand)
-
-    # opponents_deck.draw_starting_hand()
-    # print(opponents_deck.hand_size)
-    # print(opponents_deck.hand)
-
-    opponents_deck.draw_starting_hand()
-    print(my_deck.hand_size)
-    print(my_deck.hand)
+    StartGame(deck_list1, deck_list2)
+    StartGame.my_deck
 
 if __name__ == "__main__":
     main()

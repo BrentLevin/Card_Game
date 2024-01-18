@@ -33,23 +33,23 @@ class NonBasicLand:
         # how to deal with land abilities and transformations
 
 class Hand:
-    def __init__(self, hand = []):
-        self.hand = hand
+    def __init__(self):
+        self.hand = [] # if there is errors with this just put the if statement in
         self.hand_size = len(self.hand)
 
 class Deck(Hand):
     def __init__(self, deck_list):
-        self.cards = deck_list
+        self.deck = deck_list
         self.deck_size = len(deck_list)
         super().__init__()
 
     def shuffle_cards(self):
-        random.shuffle(self.cards)
+        random.shuffle(self.deck)
 
     def draw(self, number):
-        print("enterred")
         for _ in range(number):
-            self.hand.append(self.cards.pop())
+            self.hand.append(self.deck.pop()) # list comprehension
+            self.deck_size = len(self.deck) #this might be wrong
         self.hand_size = len(self.hand)
 
     def draw_starting_hand(self, starting_size = 7):
@@ -58,11 +58,16 @@ class Deck(Hand):
   
 
 class turn_interactions:
-    def upkeep(self):
+        
+    def upkeep(self, turn):
         #untap everything and draw a card
         #change who's turn it is
         # change summoning sickness to false
-        self.draw(1)
+        if turn == True:
+            self.my_deck.draw(1)
+            #untap
+        elif turn == False:
+            self.opponents_deck.draw(1)
 
     def mainphase1(self):
         #play cards
@@ -76,29 +81,84 @@ class turn_interactions:
         #opponent chooses blockers
         pass
     
-    def declare_blockers(self):
-        #opponent chooses blockers
+    def damage_resolves(self):
         pass
 
     def mainphase2(self):
         pass
 
-    def endstep(self):
-        pass
+    def endstep(self, turn):
+        if turn == True:
+            self.whose_turn = False
+        if turn == False:
+            self.whose_turn = True
+
     
-class turn(turn_interactions):
-    #maybe i could put whose turn it is in here
+    def dice_roll(self):
+        roll = random.randint(1, 2)
+        if roll == 1:
+            return True
+        else:
+            return False
+
+    def start_game(self):
+        self.my_deck.shuffle_cards() 
+        self.opponents_deck.shuffle_cards()
+        self.my_deck.draw_starting_hand()
+        self.opponents_deck.draw_starting_hand() # is there a better/cleaner way of coding this
+
+
+
+class Game(Deck, turn_interactions):
+    def __init__(self, our_decklist, opponents_decklist):
+        self.my_deck = Deck(our_decklist)
+        self.opponents_deck = Deck(opponents_decklist)
+        self.whose_turn = self.dice_roll() # if true its our turn if false its opp turn
+
     def run_turn(self):
-        self.upkeep()
+        self.upkeep(self.whose_turn)
         self.mainphase1()
         self.declare_attackers()
+        self.declare_blockers()
+        self.damage_resolves()
         self.mainphase2()
-        self.endstep()
+        self.endstep(self.whose_turn)
 
-    #need something to import a deck list
+my_deck_list = [
+    1
+    ,2
+    ,3
+    ,4
+    ,5
+    ,6
+    ,7
+    ,8
+]
+
+opp_deck_list = [
+    101
+    ,102
+    ,103
+    ,104
+    ,105
+    ,106
+    ,107
+    ,108
+]
+
 
 def main():
-    pass
+    round = Game(my_deck_list, opp_deck_list)
+    round.start_game()
+    print(round.whose_turn)
+    round.run_turn()
+    print(round.whose_turn)
+
+
+    round.run_turn()
+    print(round.my_deck.deck)
+    print(round.opponents_deck.deck)
+    print(round.whose_turn)
 
 if __name__ == "__main__":
     main()
