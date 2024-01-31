@@ -1,4 +1,9 @@
 import random
+import sys
+
+class Player:
+    def __init__(self):
+        pass
 
 class Creature:
     def __init__(self, name, faction, power, toughness, cardtype = "Creature", colourless = 0, coloured = [], flash: bool = False, flying: bool = False, tapped = False, summoning_sickness = True):
@@ -13,6 +18,7 @@ class Creature:
         self.flying = flying
         self.tapped = tapped
         self.summoning_sickness = summoning_sickness
+        # self.id = id
 
 
 class BasicLand:
@@ -29,6 +35,7 @@ class NonBasicLand:
         self.cardtype = cardtype
         self.faction = faction
         self.tapped = tapped
+        # self.id = id
         # how to deal with dual lands
         # how to deal with land abilities and transformations
 
@@ -48,24 +55,33 @@ class Deck(Hand):
 
     def draw(self, number):
         for _ in range(number):
-            if self.deck[-1] in self.hand.keys():
-                self.hand[self.deck.pop()] += 1
+            self.card_to_add = self.deck.pop()
+            print(self.card_to_add)
+            if self.card_to_add.name in self.hand.keys():
+                self.hand[self.card_to_add.name].append(self.card_to_add)
             else:
-                self.hand[self.deck.pop()] = 1
+                self.hand[self.card_to_add.name] = [self.card_to_add]
             self.deck_size = len(self.deck) #this might be wrong
-        # self.hand_size = len(self.hand)
+            self.hand_size = len(self.hand)
 
     def draw_starting_hand(self, starting_size = 7):
         self.draw(starting_size)
 
 class BattleField:
-    pass
+    def __init__(self):
+        self.active_creatures = {} ## is there a way we don't need this? or is that too slow?
+        self.active_artifacts = {}
+        self.active_lands = {}
+        self.active_enchantments = {} 
+        self.total_battlefield = {} #are these better off as hash maps
 
 class Graveyard:
-    pass
+    def __init__(self):
+        self.graveyard_cards = {} #is last 3 from a graveyard ever a feature?
 
 class Exile:
-    pass
+    def __init__(self):
+        self.exile = {}
 
 class turn_interactions:
         
@@ -75,13 +91,29 @@ class turn_interactions:
         # change summoning sickness to false
         if turn == True:
             self.my_deck.draw(1)
-            #untap
+            for i in self.my_battlefield.total_battlefield:
+                i.tapped = False
         elif turn == False:
             self.opponents_deck.draw(1)
+            for i in self.opp_battlefield.total_battlefield:
+                i.tapped = False
 
-    def mainphase1(self):
+    def mainphase1(self, turn):
         #play cards
-        pass 
+        if turn == True:
+            for key, value in self.my_deck.hand.items():
+                print(key, value)
+            print(">>>>", self.my_deck.hand)
+            self.play_card = input("play_card: ")  #could do a while loop, then end and pass # THIS DOESN'T WORK BECAUSE THE DICT IS holding OBJECTS NOT NAMES is there a way that i can have names in the dict represent objects?
+            if self.my_deck.hand[self.play_card]:
+                self.my_deck.hand[self.play_card] -= 1
+                self.my_battlefield.total_battlefield[self.play_card] += 1 # depending on card type go and add to that part of the battlefield too
+                
+            else:
+                print("error: " + self.play_card + " not in hand")
+                exit() # probably instead of exiting i want to go back to the input.
+        else: 
+            pass
 
     def declare_attackers(self):
         #choose attackes and their opponents
@@ -122,12 +154,14 @@ class turn_interactions:
 class Game(Deck, turn_interactions):
     def __init__(self, our_decklist, opponents_decklist):
         self.my_deck = Deck(our_decklist)
+        self.my_battlefield = BattleField()
         self.opponents_deck = Deck(opponents_decklist)
+        self.opp_battlefield = BattleField()
         self.whose_turn = self.dice_roll() # if true its our turn if false its opp turn
 
     def run_turn(self):
         self.upkeep(self.whose_turn)
-        self.mainphase1()
+        # self.mainphase1(self.whose_turn)
         self.declare_attackers()
         self.declare_blockers()
         self.damage_resolves()

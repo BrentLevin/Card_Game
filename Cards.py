@@ -8,6 +8,7 @@ restoration_angel = Creature(name = "Restoration Angel"
                         , toughness = 4
                         , flash = True
                         , flying = True
+                        # , id = 1
                         )
 
 high_sentinels_of_arashin = Creature(name = "High Sentinels of Arashin"
@@ -16,8 +17,8 @@ high_sentinels_of_arashin = Creature(name = "High Sentinels of Arashin"
                         , faction = "Angel"
                         , power = 3
                         , toughness = 4
-                        , flash = True
                         , flying = True
+                        # , id = 1
                         )
 
 Forest = BasicLand(
@@ -30,7 +31,57 @@ Swamp = BasicLand(
     colour = "Black"
 )
 
-Plains = BasicLand(
+Plains_1 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_2 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_3 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_4 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_5 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_6 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_7 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_8 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_9 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_10 = BasicLand(
+    name = "Plains",
+    colour = "White"
+)
+
+Plains_11 = BasicLand(
     name = "Plains",
     colour = "White"
 )
