@@ -1,0 +1,23 @@
+import random
+
+class Land():
+    def __init__(self, name):
+        self.name = name
+
+def create_ids():
+    a = {}
+    k = 0
+    while k < 10:
+        key = "Plains_" + str(random.randint(1,10000))
+        if key not in a.keys():
+            value = Land("Plains")
+            a[key] = value
+            k +=1
+    print(a)
+
+
+def main():
+    create_ids()
+
+if __name__ == "__main__":
+    main()
