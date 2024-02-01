@@ -4,11 +4,11 @@ class Land():
     def __init__(self, name):
         self.name = name
 
-def create_ids():
+def create_ids(name, number):
     a = {}
     k = 0
-    while k < 10:
-        key = "Plains_" + str(random.randint(1,10000))
+    while k < number:
+        key = name + str(random.randint(1,10000))
         if key not in a.keys():
             value = Land("Plains")
             a[key] = value
@@ -17,7 +17,7 @@ def create_ids():
 
 
 def main():
-    create_ids()
+    create_ids("Plains", 10)
 
 if __name__ == "__main__":
     main()
