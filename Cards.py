@@ -1,4 +1,4 @@
-from MTG_base import *
+from Card_Objects import *
 
 restoration_angel = Creature(name = "Restoration Angel"
                         , colourless = 3

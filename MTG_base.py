@@ -1,44 +1,9 @@
 import random
 import sys
+from Cards import object_list
+from utils import create_ids, import_deck
 
-class Player:
-    def __init__(self):
-        pass
-
-class Creature:
-    def __init__(self, name, faction, power, toughness, cardtype = "Creature", colourless = 0, coloured = [], flash: bool = False, flying: bool = False, tapped = False, summoning_sickness = True):
-        self.name = name
-        self.colourless = colourless
-        self.coloured = coloured
-        self.cardtype = cardtype
-        self.faction = faction
-        self.power = power
-        self.toughness = toughness
-        self.flash = flash
-        self.flying = flying
-        self.tapped = tapped
-        self.summoning_sickness = summoning_sickness
-        # self.id = id
-
-
-class BasicLand:
-    def __init__(self, name, colour, cardtype = "BasicLand"):
-        self.name = name
-        self.colour = colour
-        self.cardtype = cardtype
-
-class NonBasicLand:
-    def __init__(self, name, faction, cardtype = "NonBasicLand", colourless = 0, coloured = [], tapped = False):
-        self.name = name
-        self.colourless = colourless
-        self.coloured = coloured
-        self.cardtype = cardtype
-        self.faction = faction
-        self.tapped = tapped
-        # self.id = id
-        # how to deal with dual lands
-        # how to deal with land abilities and transformations
-
+### To do with an individual
 class Hand:
     def __init__(self):
         self.hand = {} # if there is errors with this just put the if statement in
@@ -67,17 +32,16 @@ class Deck(Hand):
     def draw_starting_hand(self, starting_size = 7):
         self.draw(starting_size)
 
-    def create_ids(self, name, number):
-        ided_deck = {}
-        k = 0
-        while k < number:
-            key = name + str(random.randint(1,10000))
-            if key not in ided_deck.keys():
-                value = Land("Plains") ### fix
-                ided_deck[key] = value
-                k +=1
-        return ided_deck
+class Player(Deck):
+    def __init__(self, player_letter, life_total):
+        self.formatted_deck_list = import_deck(player_letter)
+        self.deck_list = create_ids(self.formatted_deck_list)
+        self.player_letter = player_letter ### a,b,c,d to work with deck list, but eventually will be actual players name
+        self.life_total = life_total
+        super.__init__(self.deck_list)
 
+
+### field locations
 class BattleField:
     def __init__(self):
         self.active_creatures = {} ## is there a way we don't need this? or is that too slow?
@@ -94,6 +58,8 @@ class Exile:
     def __init__(self):
         self.exile = {}
 
+
+### Gameplay
 class turn_interactions:
         
     def upkeep(self, turn):
@@ -102,7 +68,7 @@ class turn_interactions:
         # change summoning sickness to false
         if turn == True:
             self.my_deck.draw(1)
-            for i in self.my_battlefield.total_battlefield:
+            for i in self.my_battlefield.total_battlefield: ### fix
                 i.tapped = False
         elif turn == False:
             self.opponents_deck.draw(1)
@@ -164,11 +130,12 @@ class turn_interactions:
 
 class Game(Deck, turn_interactions):
     def __init__(self, our_decklist, opponents_decklist):
-        self.my_deck = Deck(our_decklist)
-        self.my_battlefield = BattleField()
-        self.opponents_deck = Deck(opponents_decklist)
+        self.player_a = Player("a")
+        self.player_a_battlefield = BattleField()
+        self.player_b = Deck("b")
         self.opp_battlefield = BattleField()
         self.whose_turn = self.dice_roll() # if true its our turn if false its opp turn
+
 
     def run_turn(self):
         self.upkeep(self.whose_turn)

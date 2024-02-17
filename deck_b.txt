@@ -1,4 +1,3 @@
 Mainboard
 5 High Sentinels of Arashin
-1 Restoration Angel
-1 Forest
+12 Forest
