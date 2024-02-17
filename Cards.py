@@ -21,78 +21,35 @@ high_sentinels_of_arashin = Creature(name = "High Sentinels of Arashin"
                         # , id = 1
                         )
 
-Forest = BasicLand(
+forest = BasicLand(
     name = "Forest",
     colour = "Green"
     )
 
-Swamp = BasicLand(
+swamp = BasicLand(
     name = "Swamp",
     colour = "Black"
 )
 
-Plains_1 = BasicLand(
+plains = BasicLand(
     name = "Plains",
     colour = "White"
 )
 
-Plains_2 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_3 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_4 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_5 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_6 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_7 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_8 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_9 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_10 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Plains_11 = BasicLand(
-    name = "Plains",
-    colour = "White"
-)
-
-Mountain = BasicLand(
+mountain = BasicLand(
     name = "Mountain",
     colour = "Red"
 )
 
-Island = BasicLand(
+island = BasicLand(
     name = "Island",
     colour = "Blue"
 )
 
+object_list = {"Restoration Angel": restoration_angel,
+               "High Sentinels of Arashin": high_sentinels_of_arashin,
+               "Forest": forest,
+               "Swamp": swamp,
+               "Plains": plains,
+               "Mountain": mountain,
+               "Island": island}

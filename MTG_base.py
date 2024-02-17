@@ -67,6 +67,17 @@ class Deck(Hand):
     def draw_starting_hand(self, starting_size = 7):
         self.draw(starting_size)
 
+    def create_ids(self, name, number):
+        ided_deck = {}
+        k = 0
+        while k < number:
+            key = name + str(random.randint(1,10000))
+            if key not in ided_deck.keys():
+                value = Land("Plains") ### fix
+                ided_deck[key] = value
+                k +=1
+        return ided_deck
+
 class BattleField:
     def __init__(self):
         self.active_creatures = {} ## is there a way we don't need this? or is that too slow?
