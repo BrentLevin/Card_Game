@@ -1,7 +1,7 @@
 import random
 import sys
 from Cards import object_list
-from utils import create_ids, import_deck
+# from utils import create_ids, import_deck
 
 ### To do with an individual
 class Hand:
@@ -14,6 +14,49 @@ class Deck(Hand):
         self.deck = deck_list
         self.deck_size = len(deck_list)
         super().__init__()
+
+
+    def import_deck(player_name):
+        formatted_deck_list = {}
+        num = ["0","1","2","3","4","5","6","7","8","9"]
+
+        with open("deck_" + str(player_name) + ".txt") as f:
+            lines = list(map(str.strip, f.readlines()))
+
+        for line in lines:
+            num_of_cards = 0
+            i = 0
+
+            while i < len(line) and line[i] in num:
+                num_of_cards *= 10
+                num_of_cards += int(line[i])
+                i += 1
+            
+            if num_of_cards != 0:
+                formatted_deck_list[line[i+1:]] = num_of_cards
+
+        return formatted_deck_list
+        
+    ### probably want some in built error throwing in this too
+    ### maybe theres a way to read in other deck formats automatically figuring out which is which
+    ### also how to read in multiple decks at once and indetify whose is whos
+
+    def create_ids(formatted_deck_list): #maybe this goes in the players profile class
+        ided_deck = {}
+        for name, quantity in formatted_deck_list.items():
+            while quantity > 0:
+                key = name + str(" ") + str(random.randint(1,10000)) ### maybe I can replace spaces with _ here
+
+                while key in ided_deck.keys():
+                    key = name + str(" ") + str(random.randint(1,10000))
+
+                value = object_list[name] #the value is the object pair in the dictionary based on the name being passed in # Land("Plains") ### fix
+                ided_deck[key] = value
+
+                quantity -= 1
+
+        return ided_deck
+
 
     def shuffle_cards(self):
         random.shuffle(self.deck)
@@ -34,11 +77,10 @@ class Deck(Hand):
 
 class Player(Deck):
     def __init__(self, player_letter, life_total):
-        self.formatted_deck_list = import_deck(player_letter)
-        self.deck_list = create_ids(self.formatted_deck_list)
+        self.deck_list = Deck.create_ids(Deck.import_deck(player_letter)) ### how to do this better, just have the functions in utils? ASK Yossman #when to use func in classes vs not in a class, how to condense create_ids to reference import_deck #oh and is there a better way to do the triple while loop
         self.player_letter = player_letter ### a,b,c,d to work with deck list, but eventually will be actual players name
         self.life_total = life_total
-        super.__init__(self.deck_list)
+        super().__init__(self.deck_list)
 
 
 ### field locations
@@ -129,11 +171,11 @@ class turn_interactions:
 
 
 class Game(Deck, turn_interactions):
-    def __init__(self, our_decklist, opponents_decklist):
-        self.player_a = Player("a")
+    def __init__(self):
+        self.player_a = Player("a", 40)
         self.player_a_battlefield = BattleField()
-        self.player_b = Deck("b")
-        self.opp_battlefield = BattleField()
+        self.player_b = Player("b", 40)
+        self.player_b_battlefield = BattleField()
         self.whose_turn = self.dice_roll() # if true its our turn if false its opp turn
 
 
@@ -147,7 +189,8 @@ class Game(Deck, turn_interactions):
         self.endstep(self.whose_turn)
 
 def main():
-    pass
+    play_game = Game()
+    play_game.run_turn()
 
 if __name__ == "__main__":
     main()
