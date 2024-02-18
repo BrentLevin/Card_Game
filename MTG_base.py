@@ -116,7 +116,7 @@ class turn_interactions:
             self.opponents_deck.draw(1)
             for i in self.opp_battlefield.total_battlefield:
                 i.tapped = False
-
+#################################################################
     def mainphase1(self, turn):
         #play cards
         if turn == True:
@@ -161,6 +161,12 @@ class turn_interactions:
             return True
         else:
             return False
+        
+    def whose_turn(self, whose_turn):
+        if whose_turn == True:
+            return "player_a"
+        elif whose_turn == False:
+            return "player_b"
 
     def start_game(self):
         self.my_deck.shuffle_cards() 
@@ -176,7 +182,7 @@ class Game(Deck, turn_interactions):
         self.player_a_battlefield = BattleField()
         self.player_b = Player("b", 40)
         self.player_b_battlefield = BattleField()
-        self.whose_turn = self.dice_roll() # if true its our turn if false its opp turn
+        self.active_player = self.whose_turn(self.dice_roll()) # if true its our turn if false its opp turn
 
 
     def run_turn(self):
