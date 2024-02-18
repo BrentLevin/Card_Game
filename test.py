@@ -24,6 +24,9 @@ class Deck:
     def __init__(self, list_of_cards):
         self.cards = list_of_cards
 
+    def draw(self):
+        print(self.active_player.cards.pop())
+
 class Player(Deck):
     def __init__(self, name, list_of_cards):
         self.name = name
@@ -33,11 +36,11 @@ class Game(Player):
     def __init__(self):
         self.player_a = Player("a", list_a)
         self.player_b = Player("b", list_b)
-        self.penis = self.player_a
+        self.active_player = self.player_a
+
 
 def main():
     active_game = Game()
-    print(active_game.penis.cards)
-
+    active_game.draw()
 if __name__ == "__main__":
     main()

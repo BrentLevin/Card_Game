@@ -61,9 +61,10 @@ class Deck(Hand):
     def shuffle_cards(self):
         random.shuffle(self.deck)
 
-    def draw(self, number):
+    def draw(self, number = 1):
         for _ in range(number):
-            self.card_to_add = self.deck.pop()
+            print(self.active_player.deck.pop())
+            self.card_to_add = self.active_player.deck.pop()
             print(self.card_to_add)
             if self.card_to_add.name in self.hand.keys():
                 self.hand[self.card_to_add.name].append(self.card_to_add)
@@ -104,18 +105,14 @@ class Exile:
 ### Gameplay
 class turn_interactions:
         
-    def upkeep(self, turn):
+    def upkeep(self):
         #untap everything and draw a card
         #change who's turn it is
         # change summoning sickness to false
-        if turn == True:
-            self.my_deck.draw(1)
-            for i in self.my_battlefield.total_battlefield: ### fix
-                i.tapped = False
-        elif turn == False:
-            self.opponents_deck.draw(1)
-            for i in self.opp_battlefield.total_battlefield:
-                i.tapped = False
+        self.draw()
+        for i in self.my_battlefield.total_battlefield: ### fix
+            i.tapped = False
+
 #################################################################
     def mainphase1(self, turn):
         #play cards
@@ -162,11 +159,11 @@ class turn_interactions:
         else:
             return False
         
-    def whose_turn(self, whose_turn):
+    def who_is_active(self, whose_turn):
         if whose_turn == True:
-            return "player_a"
+            return self.player_a
         elif whose_turn == False:
-            return "player_b"
+            return self.player_b
 
     def start_game(self):
         self.my_deck.shuffle_cards() 
@@ -182,11 +179,11 @@ class Game(Deck, turn_interactions):
         self.player_a_battlefield = BattleField()
         self.player_b = Player("b", 40)
         self.player_b_battlefield = BattleField()
-        self.active_player = self.whose_turn(self.dice_roll()) # if true its our turn if false its opp turn
+        self.active_player = self.who_is_active(self.dice_roll()) # if true its our turn if false its opp turn
 
 
     def run_turn(self):
-        self.upkeep(self.whose_turn)
+        self.upkeep()
         # self.mainphase1(self.whose_turn)
         self.declare_attackers()
         self.declare_blockers()
