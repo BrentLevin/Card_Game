@@ -6,18 +6,19 @@ from Cards import object_list
 ### To do with an individual
 class Hand:
     def __init__(self):
-        self.hand = {} # if there is errors with this just put the if statement in
+        self.hand = [] # if there is errors with this just put the if statement in
         # self.hand_size = len(self.hand) #Better to represent hand as a dictionary?
 
 class Deck(Hand):
     def __init__(self, deck_list):
+        print("deck")
         self.deck = deck_list
         self.deck_size = len(deck_list)
         super().__init__()
 
 
     def import_deck(player_name):
-        formatted_deck_list = {}
+        formatted_deck_list = []
         num = ["0","1","2","3","4","5","6","7","8","9"]
 
         with open("deck_" + str(player_name) + ".txt") as f:
@@ -32,30 +33,31 @@ class Deck(Hand):
                 num_of_cards += int(line[i])
                 i += 1
             
-            if num_of_cards != 0:
-                formatted_deck_list[line[i+1:]] = num_of_cards
+            card_name = line[i+1:]
+           
+            for _ in range(num_of_cards):
+                formatted_deck_list.append(object_list[card_name])
 
         return formatted_deck_list
         
     ### probably want some in built error throwing in this too
     ### maybe theres a way to read in other deck formats automatically figuring out which is which
     ### also how to read in multiple decks at once and indetify whose is whos
-
+    ##### fix this
     def create_ids(formatted_deck_list): #maybe this goes in the players profile class
-        ided_deck = {}
-        for name, quantity in formatted_deck_list.items():
-            while quantity > 0:
-                key = name + str(" ") + str(random.randint(1,10000)) ### maybe I can replace spaces with _ here
+        check_list = []
+        for card_object in formatted_deck_list:
+            temp_id = card_object.name + str(" ") + str(random.randint(1,10000)) ### maybe I can replace spaces with _ here
 
-                while key in ided_deck.keys():
-                    key = name + str(" ") + str(random.randint(1,10000))
+            while temp_id in check_list:
+                temp_id = card_object.name + str(" ") + str(random.randint(1,10000))
 
-                value = object_list[name] #the value is the object pair in the dictionary based on the name being passed in # Land("Plains") ### fix
-                ided_deck[key] = value
+                if temp_id not in check_list:
+                    check_list.append(temp_id)
+            
+            card_object.id = temp_id
 
-                quantity -= 1
-
-        return ided_deck
+        return formatted_deck_list
 
 
     def shuffle_cards(self):
@@ -63,43 +65,44 @@ class Deck(Hand):
 
     def draw(self, number = 1):
         for _ in range(number):
-            print(self.active_player.deck.pop())
-            self.card_to_add = self.active_player.deck.pop()
-            print(self.card_to_add)
-            if self.card_to_add.name in self.hand.keys():
-                self.hand[self.card_to_add.name].append(self.card_to_add)
-            else:
-                self.hand[self.card_to_add.name] = [self.card_to_add]
-            self.deck_size = len(self.deck) #this might be wrong
-            self.hand_size = len(self.hand)
+            card_to_add = self.active_player.deck.pop()
+            self.active_player.hand.append(card_to_add)
+
+            self.deck_size = len(self.active_player.deck) #this might be wrong
+            self.hand_size = len(self.active_player.hand)
 
     def draw_starting_hand(self, starting_size = 7):
         self.draw(starting_size)
 
-class Player(Deck):
+
+
+
+### field locations
+class Battlefield:
+    def __init__(self):
+        super().__init__()
+        print("battle")
+        self.active_creatures = [] ## is there a way we don't need this? or is that too slow?
+        self.active_artifacts = []
+        self.active_lands = []
+        self.active_enchantments = [] 
+        self.total_player_battlefield = [] #are these better off as hash maps
+
+class Graveyard:
+    def __init__(self):
+        self.graveyard_cards = [] #is last 3 from a graveyard ever a feature?
+
+class Exile:
+    def __init__(self):
+        self.exile = []
+
+
+class Player(Deck, Battlefield):
     def __init__(self, player_letter, life_total):
         self.deck_list = Deck.create_ids(Deck.import_deck(player_letter)) ### how to do this better, just have the functions in utils? ASK Yossman #when to use func in classes vs not in a class, how to condense create_ids to reference import_deck #oh and is there a better way to do the triple while loop
         self.player_letter = player_letter ### a,b,c,d to work with deck list, but eventually will be actual players name
         self.life_total = life_total
         super().__init__(self.deck_list)
-
-
-### field locations
-class BattleField:
-    def __init__(self):
-        self.active_creatures = {} ## is there a way we don't need this? or is that too slow?
-        self.active_artifacts = {}
-        self.active_lands = {}
-        self.active_enchantments = {} 
-        self.total_battlefield = {} #are these better off as hash maps
-
-class Graveyard:
-    def __init__(self):
-        self.graveyard_cards = {} #is last 3 from a graveyard ever a feature?
-
-class Exile:
-    def __init__(self):
-        self.exile = {}
 
 
 ### Gameplay
@@ -110,7 +113,7 @@ class turn_interactions:
         #change who's turn it is
         # change summoning sickness to false
         self.draw()
-        for i in self.my_battlefield.total_battlefield: ### fix
+        for i in self.active_player.total_player_battlefield: ### fix
             i.tapped = False
 
 #################################################################
@@ -173,12 +176,10 @@ class turn_interactions:
 
 
 
-class Game(Deck, turn_interactions):
+class Game(turn_interactions):
     def __init__(self):
         self.player_a = Player("a", 40)
-        self.player_a_battlefield = BattleField()
         self.player_b = Player("b", 40)
-        self.player_b_battlefield = BattleField()
         self.active_player = self.who_is_active(self.dice_roll()) # if true its our turn if false its opp turn
 
 
@@ -193,7 +194,8 @@ class Game(Deck, turn_interactions):
 
 def main():
     play_game = Game()
-    play_game.run_turn()
+    # print(play_game.active_player.total_player_battlefield)
+    # play_game.run_turn()
 
 if __name__ == "__main__":
     main()
