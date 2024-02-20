@@ -85,11 +85,113 @@
 
 ###
 
+import random
+import sys
+from Cards import object_list
+# from utils import create_ids, import_deck
+
+### To do with an individual
+class Hand:
+    def __init__(self):
+        self.hand = [] # if there is errors with this just put the if statement in
+        # self.hand_size = len(self.hand) #Better to represent hand as a dictionary?
+
+class Deck(Hand):
+    def __init__(self):
+        pass
+
+
+    def import_deck(player_name):
+        formatted_deck_list = []
+        num = ["0","1","2","3","4","5","6","7","8","9"]
+
+        with open("deck_" + str(player_name) + ".txt") as f:
+            lines = list(map(str.strip, f.readlines()))
+
+        for line in lines:
+            num_of_cards = 0
+            i = 0
+
+            while i < len(line) and line[i] in num:
+                num_of_cards *= 10
+                num_of_cards += int(line[i])
+                i += 1
+            
+            card_name = line[i+1:]
+           
+            for _ in range(num_of_cards):
+                formatted_deck_list.append(object_list[card_name])
+
+        return formatted_deck_list
+        
+    ### probably want some in built error throwing in this too
+    ### maybe theres a way to read in other deck formats automatically figuring out which is which
+    ### also how to read in multiple decks at once and indetify whose is whos
+
+    def create_ids(formatted_deck_list): #maybe this goes in the players profile class
+        check_list = []
+
+        for card_object in formatted_deck_list:
+            card_id = card_object.name + str(" ") + str(random.randint(1,10000)) ### maybe I can replace spaces with _ here
+
+            while card_id in check_list:
+                card_id = card_object.name + str(" ") + str(random.randint(1,10000))
+
+                if card_id not in check_list:
+                    check_list.append(card_id)
+            
+            card_object.id = card_id
+
+        return formatted_deck_list
+
+
+    def shuffle_cards(self):
+        random.shuffle(self.deck)
+
+    def draw(self, number = 1):
+        for _ in range(number):
+            card_to_add = self.active_player.deck.pop()
+            self.active_player.hand.append(card_to_add)
+
+            self.deck_size = len(self.active_player.deck) #this might be wrong
+            self.hand_size = len(self.active_player.hand)
+
+    def draw_starting_hand(self, starting_size = 7):
+        self.draw(starting_size)
+
+    def discard():
+        pass
+
+    def mulligan():
+        pass
+
+class Player:
+    def __init__(self, player_name, life_total, deck_list = []):
+        self.deck_list = deck_list ### how to do this better, just have the functions in utils? ASK Yossman #when to use func in classes vs not in a class, how to condense create_ids to reference import_deck #oh and is there a better way to do the triple while loop
+        self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
+        self.life_total = life_total
+
+class InitialisingEverything:
+    def __init__(self, number_of_players, players = []):
+        self.players = players
+        self.initialise_players(number_of_players)
+        self.initialise_decks()
+
+
+    def initialise_players(self,number_of_players):
+        for i in range(number_of_players):
+            self.players.append(Player(chr(97 + i), 40))
+
+    def initialise_decks(self):
+        for i in self.players:
+            i.deck_list = Deck.create_ids(Deck.import_deck(i.player_name)) #clean this up, but basically we are adding each players deck to their player object
+
 def main():
-    list_test = []
-    for i in range(5):
-        list_test.append("bob")
-    print(list_test)
+    play_game = InitialisingEverything(2)
+    for i in play_game.players:
+        for j in i.deck_list:
+            print(j.name)
+        print("")
 
 if __name__ == "__main__":
     main()
