@@ -218,77 +218,20 @@ from Cards import *
 import random
 import sys
 from Cards import object_list
-
-# from utils import create_ids, import_deck
-
-### To do with an individual
-
-class Deck:
-    def draw(self, number = 1):
-        for _ in range(number):
-            print("")
-            print(self.player_name)
-            print(len(self.hand)) ####why are they sharing a hand???????????????????????????
-            print(len(self.deck))
-            card_to_add = self.deck.pop()
-            self.hand.append(card_to_add)
-    
-    def draw_starting_hand(self, starting_size: int = 7):
-        Deck.draw(self, starting_size)
+from dataclasses import dataclass
 
 
+
+@dataclass
 class Player:
-    def __init__(self, player_name, life_total, deck_list = [], hand = []):
-        self.deck = deck_list 
-        self.life_total = life_total
-        self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
-        self.hand = hand
-
-class TurnInteractions:
-        
-    @staticmethod
-    def dice_roll(number_of_players):
-        roll = random.randint(0, number_of_players - 1)
-        return roll
-        
-    def who_is_active(self, whose_turn):
-        return self.players[whose_turn]
-
-    def start_game(self, number_of_players):
-        self.active_player = TurnInteractions.who_is_active(self, TurnInteractions.dice_roll(number_of_players))
-
-        for player in self.players: #order with mulligans?
-            Deck.draw_starting_hand(player)
-
-
-class InitialisingEverything:
-    def __init__(self, number_of_players, players = []):
-        self.players = players
-        self.initialise_players(number_of_players)
-        self.initialise_decks(deck_list_prac)
-        self.active_player = None
-
-    def initialise_players(self,number_of_players):
-        for i in range(number_of_players):
-            self.players.append(Player(chr(97 + i), 40))
-
-    def initialise_decks(self, deck):
-        for i in self.players:
-            i.deck = deck
-
-class Game(InitialisingEverything):
-    def __init__(self, number_of_players):
-        super().__init__(number_of_players)
-        TurnInteractions.start_game(self, number_of_players)
-
-deck_list_prac = [plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains, plains]
-
+        player_name: any ### a,b,c,d to work with deck list, but eventually will be actual players name
+        hand: list = list()
 
 def main():
-    play_game = Game(2)
-    Deck.draw(play_game.active_player)
-    Deck.draw(play_game.active_player)
-    assert play_game.players[0].life_total == play_game.players[1].life_total
+    player_c = Player("c", [])
+    player_d = Player("d" ,[])
+
+    print(player_d.hand is player_c.hand)
 
 if __name__ == "__main__":
     main()

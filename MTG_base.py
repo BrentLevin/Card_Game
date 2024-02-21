@@ -78,11 +78,12 @@ class Deck:
 
 
 class Player:
-    def __init__(self, player_name, life_total, deck_list = [], hand = []):
-        self.deck = deck_list 
+    def __init__(self, player_name, life_total):
+        self.deck = []
         self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
         self.life_total = life_total
-        self.hand = hand
+        self.hand = []
+
         self.initialise_player_tablespace()
 
     def initialise_player_tablespace(self): ### is this bad practice?
