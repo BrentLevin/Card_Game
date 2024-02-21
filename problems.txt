@@ -3,3 +3,11 @@ maybe theres a way to read in other deck formats automatically figuring out whic
 also how to read in multiple decks at once and indetify whose is whose
 
 So i pass in a decklist. how does it now which object to create in the id generator? atm it just makes a land. could I have a dictionary with every single card name and every object of that card name? in which case i'd pass a list, which would give a rand id to the name and make the obect based on the hashmap, idk if this would work.
+
+is of a capital or note in the exported deck format
+
+how to match players name to deck_list file name. Maybe you can import all decks, filter by space and then select deck after and assign it to player then
+
+player inherits deck, dec
+
+do i need to make anything private _jfgyjgy

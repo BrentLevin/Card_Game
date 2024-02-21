@@ -1,24 +1,18 @@
 import random
 import sys
 from Cards import object_list
+
 # from utils import create_ids, import_deck
 
 ### To do with an individual
-class Hand:
+
+class Deck:
     def __init__(self):
-        self.hand = [] # if there is errors with this just put the if statement in
-        # self.hand_size = len(self.hand) #Better to represent hand as a dictionary?
-
-class Deck(Hand):
-    def __init__(self, deck_list):
-        self.deck = deck_list
-        self.deck_size = len(self.deck)
-        super().__init__()
-
+        pass
 
     def import_deck(player_name):
         formatted_deck_list = []
-        num = ["0","1","2","3","4","5","6","7","8","9"]
+        num = [str(i) for i in range(0,10)]
 
         with open("deck_" + str(player_name) + ".txt") as f:
             lines = list(map(str.strip, f.readlines()))
@@ -59,20 +53,22 @@ class Deck(Hand):
 
         return formatted_deck_list
 
-
-    def shuffle_cards(self):
-        random.shuffle(self.deck)
+    @staticmethod
+    def shuffle_cards(deck_to_shuffle):
+        random.shuffle(deck_to_shuffle)
 
     def draw(self, number = 1):
         for _ in range(number):
-            card_to_add = self.active_player.deck.pop()
-            self.active_player.hand.append(card_to_add)
+            print(self.deck)
+            card_to_add = self.deck.pop()
+            self.hand.append(card_to_add)
 
-            self.deck_size = len(self.active_player.deck) #this might be wrong
-            self.hand_size = len(self.active_player.hand)
+            self.deck_size = len(self.deck) #this might be wrong
+            self.hand_size = len(self.hand)
 
+    
     def draw_starting_hand(self, starting_size = 7):
-        self.draw(starting_size)
+        Deck.draw(self, starting_size)
 
     def discard():
         pass
@@ -81,29 +77,23 @@ class Deck(Hand):
         pass
 
 
-### field locations
-class Battlefield:
-    def __init__(self):
-        self.active_creatures = [] ## is there a way we don't need this? or is that too slow?
+class Player:
+    def __init__(self, player_name, life_total, deck_list = [], hand = []):
+        self.deck = deck_list 
+        self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
+        self.life_total = life_total
+        self.hand = hand
+        self.initialise_player_tablespace()
+
+    def initialise_player_tablespace(self): ### is this bad practice?
+        self.active_creatures = []
         self.active_artifacts = []
         self.active_lands = []
         self.active_enchantments = [] 
-        self.total_player_battlefield = [] #are these better off as hash maps
+        self.total_player_battlefield = [] 
+        self.graveyard_cards = []
+        exile = [] #this is sharedm therefore no self?
 
-class Graveyard:
-    def __init__(self):
-        self.graveyard_cards = [] #is last 3 from a graveyard ever a feature?
-
-class Exile:
-    def __init__(self):
-        self.exile = []
-
-
-class Player:
-    def __init__(self, player_name, life_total, deck_list = []):
-        self.deck_list = deck_list ### how to do this better, just have the functions in utils? ASK Yossman #when to use func in classes vs not in a class, how to condense create_ids to reference import_deck #oh and is there a better way to do the triple while loop
-        self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
-        self.life_total = life_total
 
 
 ### Gameplay
@@ -113,11 +103,10 @@ class TurnInteractions:
         #untap everything and draw a card
         #change who's turn it is
         # change summoning sickness to false
-        self.draw()
+        Deck.draw(self)
         for i in self.active_player.total_player_battlefield: ### fix
             i.tapped = False
 
-#################################################################
     def mainphase1(self, turn):
         #play cards
         if turn == True:
@@ -155,25 +144,20 @@ class TurnInteractions:
         if turn == False:
             self.whose_turn = True
 
-    
-    def dice_roll(self):
-        roll = random.randint(1, 2)
-        if roll == 1:
-            return True
-        else:
-            return False
+    @staticmethod
+    def dice_roll(number_of_players):
+        roll = random.randint(0, number_of_players - 1)
+        return roll
         
     def who_is_active(self, whose_turn):
-        if whose_turn == True:
-            return self.player_a
-        elif whose_turn == False:
-            return self.player_b
+        return self.players[whose_turn]
 
-    def start_game(self):
-        self.my_deck.shuffle_cards() 
-        self.opponents_deck.shuffle_cards()
-        self.my_deck.draw_starting_hand()
-        self.opponents_deck.draw_starting_hand() # is there a better/cleaner way of coding this
+    def start_game(self, number_of_players):
+        self.acitve_player = TurnInteractions.who_is_active(self, TurnInteractions.dice_roll(number_of_players))
+
+        for player in self.players: #order with mulligans?
+            Deck.shuffle_cards(player.deck) 
+            Deck.draw_starting_hand(player)
 
     def run_turn(self):
         self.upkeep()
@@ -184,12 +168,14 @@ class TurnInteractions:
         self.mainphase2()
         self.endstep(self.whose_turn)
 
+
+
 class InitialisingEverything:
     def __init__(self, number_of_players, players = []):
         self.players = players
         self.initialise_players(number_of_players)
         self.initialise_decks()
-        self.initialise_battlefield()
+        self.active_player = None
 
     def initialise_players(self,number_of_players):
         for i in range(number_of_players):
@@ -197,23 +183,23 @@ class InitialisingEverything:
 
     def initialise_decks(self):
         for i in self.players:
-            i.deck_list = Deck.create_ids(Deck.import_deck(i.player_name)) #clean this up, but basically we are adding each players deck to their player object
-    
-    def initialise_battlefield(self):
-        for i in self.players:
-            i.battlefield = Battlefield()
-            i.exile = Exile()
-            i.graveyard = Graveyard()
+            i.deck = Deck.create_ids(Deck.import_deck(i.player_name)) #clean this up, but basically we are adding each players deck to their player object
 
-class Game(TurnInteractions):
-    def __init__(self):
-        self.active_player = self.who_is_active(self.dice_roll()) # if true its our turn if false its opp turn
 
+class Game(InitialisingEverything):
+    def __init__(self, number_of_players):
+        super().__init__(number_of_players)
+        TurnInteractions.start_game(self, number_of_players)
 
 
 
 def main():
-    play_game = Game()
+    play_game = Game(2)
+    for player in play_game.players:
+        print("")
+        print(player.player_name)
+        for card in player.hand:
+            print(card.name)
     # print(play_game.active_player.total_player_battlefield)
     # play_game.run_turn()
 

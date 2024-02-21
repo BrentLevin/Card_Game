@@ -1,32 +1,34 @@
+from dataclasses import dataclass
+
+@dataclass
 class Creature:
-    def __init__(self, name, faction, power, toughness, cardtype = "Creature", colourless = 0, coloured = [], flash: bool = False, flying: bool = False, tapped = False, summoning_sickness = True):
-        self.name = name
-        self.colourless = colourless
-        self.coloured = coloured
-        self.cardtype = cardtype
-        self.faction = faction
-        self.power = power
-        self.toughness = toughness
-        self.flash = flash
-        self.flying = flying
-        self.tapped = tapped
-        self.summoning_sickness = summoning_sickness
+        name: str
+        colourless: int
+        coloured: list
+        faction: str
+        power: int
+        toughness: int
+        flash: bool = False
+        flying: bool = False
+        tapped: bool = False
+        summoning_sickness: bool = True
+        cardtype: str = "Creature"
 
 
+@dataclass
 class BasicLand:
-    def __init__(self, name, colour, cardtype = "BasicLand"):
-        self.name = name
-        self.colour = colour
-        self.cardtype = cardtype
+        name: str
+        colour: list
+        cardtype: str = "BasicLand"
 
+@dataclass
 class NonBasicLand:
-    def __init__(self, name, faction, cardtype = "NonBasicLand", colourless = 0, coloured = [], tapped = False):
-        self.name = name
-        self.colourless = colourless
-        self.coloured = coloured
-        self.cardtype = cardtype
-        self.faction = faction
-        self.tapped = tapped
-        # self.id = id
+        name: str
+        colourless: int
+        coloured: list
+        faction: str
+        tapped: bool
+        cardtype: str = "NonBasicLand"
+
         # how to deal with dual lands
         # how to deal with land abilities and transformations
