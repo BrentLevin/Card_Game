@@ -222,16 +222,34 @@ from dataclasses import dataclass
 
 
 
-@dataclass
-class Player:
-        player_name: any ### a,b,c,d to work with deck list, but eventually will be actual players name
-        hand: list = list()
+# @dataclass
+# class Player:
+#         player_name: any ### a,b,c,d to work with deck list, but eventually will be actual players name
+#         hand: list = list()
+
+# def main():
+#     player_c = Player("c", [])
+#     player_d = Player("d",[])
+
+#     print(player_d.hand is player_c.hand)
+
+import copy
 
 def main():
-    player_c = Player("c", [])
-    player_d = Player("d" ,[])
+    test_dict = {"name" : BasicLand("bob", "w")}
 
-    print(player_d.hand is player_c.hand)
+    test_list = []
+
+    for i in range(5):
+        test_list.append(copy.copy(test_dict["name"]))
+        # test_list.append(BasicLand("bob", "w"))
+
+ 
+
+    test_list[3].name = "renamed"
+
+    for i in test_list:
+        print(i.name)
 
 if __name__ == "__main__":
     main()
