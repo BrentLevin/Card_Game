@@ -235,21 +235,27 @@ from dataclasses import dataclass
 
 import copy
 
-def main():
-    test_dict = {"name" : BasicLand("bob", "w")}
+# def main():
+#     test_dict = {"name" : BasicLand("bob", "w")}
 
-    test_list = []
+#     test_list = []
 
-    for i in range(5):
-        test_list.append(copy.copy(test_dict["name"]))
-        # test_list.append(BasicLand("bob", "w"))
+#     for i in range(5):
+#         test_list.append(copy.copy(test_dict["name"]))
+#         # test_list.append(BasicLand("bob", "w"))
 
  
 
-    test_list[3].name = "renamed"
+#     test_list[3].name = "renamed"
 
-    for i in test_list:
-        print(i.name)
+#     for i in test_list:
+#         print(i.name)
+
+def main():
+    for i in range(5):
+        print(i)
+        if i == 2:
+            break
 
 if __name__ == "__main__":
     main()

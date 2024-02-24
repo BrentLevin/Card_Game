@@ -11,3 +11,7 @@ how to match players name to deck_list file name. Maybe you can import all decks
 player inherits deck, dec
 
 do i need to make anything private _jfgyjgy
+
+i probably want to make my pycache in my git ignore
+
+make sure active player is working correctly

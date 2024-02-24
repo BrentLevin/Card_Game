@@ -51,7 +51,7 @@ class Deck:
 
         return formatted_deck_list
 
-    @staticmethod
+    @staticmethod #what does this actually do?
     def shuffle_cards(deck_to_shuffle):
         random.shuffle(deck_to_shuffle)
 
@@ -73,14 +73,6 @@ class Deck:
     def mulligan():
         pass
 
-    def find_card(self, name_of_card_to_play):
-        for card in self.active_player.hand:
-            if name_of_card_to_play == card.id:
-                return card
-        
-        print("error: " + name_of_card_to_play + " not in hand")
-        exit()
-
     def remove_card_from_list(self, card_to_play, location_of_removal): #this feels slow, but remove is removing the wrong darn thing
         search_length = len(location_of_removal)
 
@@ -89,16 +81,53 @@ class Deck:
                 del location_of_removal[i]
                 break
 
-    def play_card(self):
-        for card in self.active_player.hand:
-                print(card.id)
+    def play_card(self, start_player_index):
+        while True:
+            card_to_play = None
+            print(self.active_player.player_name)
 
-        name_of_card_to_play = input("play_card: ")
-        card_to_play = Deck.find_card(self, name_of_card_to_play)
+            for card in self.active_player.hand:
+                    print(card.id)
 
-        Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-        self.active_player.total_player_battlefield.append(card_to_play) # depending on card type go and add to that part of the battlefield too
-   
+            name_of_card_to_play = input("play_card [to skip type in 'pass']:    ")
+
+            if name_of_card_to_play == "exit": ### for debugging
+                exit()
+
+            elif name_of_card_to_play == "pass":
+                if self.active_player_index == start_player_index: ### need some tracker of if the starting player and then everyone has passed cuz tehcnically this is wrong
+                    break
+                else:
+                    if self.active_player_index == len(self.players) - 1:
+                        self.active_player_index = 0
+                    else:
+                        self.active_player_index += 1
+                    
+                    self.active_player = self.players[self.active_player_index] 
+
+            elif name_of_card_to_play != None:
+                for card in self.active_player.hand: ## okay well can I actually afford to play said card?
+                    if name_of_card_to_play == card.id:
+                        card_to_play = card
+                        Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
+                        self.active_player.total_player_battlefield.append(card_to_play)
+                        break
+
+                if card_to_play != None:
+                    if self.active_player_index == len(self.players) - 1:
+                        self.active_player_index = 0
+                    else:
+                        self.active_player_index += 1
+                    
+                    self.active_player = self.players[self.active_player_index]   # depending on card type go and add to that part of the battlefield too
+
+                else:
+                    print("error: " + name_of_card_to_play + " not in hand")
+                    continue
+
+              ### gonna need to make this a method
+
+    
 
 class Player:
     def __init__(self, player_name, life_total):
@@ -143,7 +172,7 @@ class TurnInteractions:
             i.tapped = False
 
     def mainphase1(self):
-        Deck.play_card(self)
+        Deck.play_card(self, self.active_player_index)
 
     def declare_attackers(self):
         #choose attackes and their opponents
@@ -169,7 +198,8 @@ class TurnInteractions:
         return roll
 
     def start_game(self, number_of_players):
-        self.active_player = self.players[TurnInteractions.dice_roll(number_of_players)]
+        self.active_player_index = TurnInteractions.dice_roll(number_of_players)
+        self.active_player = self.players[self.active_player_index]
 
         for player in self.players: #order with mulligans?
             Deck.shuffle_cards(player.deck) 
@@ -211,7 +241,7 @@ class Game(InitialisingEverything):
 
 
 def main():
-    play_game = Game(2)
+    play_game = Game(1) #change back to 2
 
 
     TurnInteractions.run_turn(play_game)
@@ -222,12 +252,6 @@ def main():
     #     print(i.id)
     #     print("")
     #     print(len(play_game.active_player.hand))
-    print("")
-    print("")
-    print("")
-    print("whats missing below")
-    for card in play_game.active_player.hand:
-        print(card.id)
 
 
 if __name__ == "__main__":
