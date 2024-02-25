@@ -81,10 +81,25 @@ class Deck:
                 del location_of_removal[i]
                 break
 
-    def play_card(self, start_player_index):
+    def pass_priority(self):
+        if self.active_player_index == len(self.players) - 1:
+                self.active_player_index = 0
+        else:
+            self.active_player_index += 1
+            
+        self.active_player = self.players[self.active_player_index] 
+
+    def resolve_card_from_stack(self):
+        self.active_player.total_player_battlefield.append(self.stack[-1]) #assumig it resolves to battle field sorcery resolves will be to different location
+        del self.stack[-1]
+        
+
+    def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed
+        finality_of_priority = 0
         while True:
+            print(len(self.stack))
             card_to_play = None
-            print(self.active_player.player_name)
+            print("Player", self.active_player.player_name, "to play:")
 
             for card in self.active_player.hand:
                     print(card.id)
@@ -95,37 +110,35 @@ class Deck:
                 exit()
 
             elif name_of_card_to_play == "pass":
-                if self.active_player_index == start_player_index: ### need some tracker of if the starting player and then everyone has passed cuz tehcnically this is wrong
-                    break
-                else:
-                    if self.active_player_index == len(self.players) - 1:
-                        self.active_player_index = 0
-                    else:
-                        self.active_player_index += 1
-                    
-                    self.active_player = self.players[self.active_player_index] 
+                finality_of_priority += 1
 
+                if finality_of_priority == len(self.players):
+                    if len(self.stack) > 0:
+                        Deck.resolve_card_from_stack(self) #make sure that active player is correct here to match the person who pLYAED IT BIG EJHFDWAJDWJKLADJKLA
+                        self.active_player_index = start_player_index
+                        self.active_player = self.players[self.active_player_index] #send it back to the person whose turn it is
+                        finality_of_priority = 0
+
+                    else:
+                        break
+
+                else:
+                    Deck.pass_priority(self) # WHY DO I NEED TO PASS SELF IN HERE makes me think self is not functioning properly
+             
             elif name_of_card_to_play != None:
-                for card in self.active_player.hand: ## okay well can I actually afford to play said card?
+                finality_of_priority = 0
+
+                for card in self.active_player.hand: ## okay well can I actually afford to play said card?    # depending on card type go and add to that part of the battlefield tooc
                     if name_of_card_to_play == card.id:
                         card_to_play = card
                         Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                        self.active_player.total_player_battlefield.append(card_to_play)
+                        self.stack.append(card_to_play)
                         break
 
-                if card_to_play != None:
-                    if self.active_player_index == len(self.players) - 1:
-                        self.active_player_index = 0
-                    else:
-                        self.active_player_index += 1
-                    
-                    self.active_player = self.players[self.active_player_index]   # depending on card type go and add to that part of the battlefield too
-
-                else:
+                if card_to_play == None: #print an error only if the for loop cant find anything
                     print("error: " + name_of_card_to_play + " not in hand")
-                    continue
-
-              ### gonna need to make this a method
+                    
+             
 
     
 
@@ -156,13 +169,7 @@ class TurnInteractions:
         #change who's turn it is
         # change summoning sickness to false
         if self.every_turn_counter > 0:
-            if self.active_player_index == len(self.players) - 1:
-                self.active_player_index = 0
-
-            else:
-                self.active_player_index += 1
-
-            self.active_player = self.players[self.active_player_index] ### 
+            Deck.pass_priority(self)
         
         self.every_turn_counter += 1
         self.exact_turn_counter = self.every_turn_counter % 4
@@ -218,6 +225,7 @@ class TurnInteractions:
 class InitialisingEverything:
     def __init__(self, number_of_players):
         self.players = []
+        self.stack = []
         self.initialise_players(number_of_players)
         self.initialise_decks()
         self.active_player = None
@@ -241,7 +249,7 @@ class Game(InitialisingEverything):
 
 
 def main():
-    play_game = Game(1) #change back to 2
+    play_game = Game(2) 
 
 
     TurnInteractions.run_turn(play_game)

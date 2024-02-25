@@ -15,3 +15,9 @@ do i need to make anything private _jfgyjgy
 i probably want to make my pycache in my git ignore
 
 make sure active player is working correctly
+
+fix passing
+
+resolving from the stack problems
+
+#124 why do i need to pass self inot the pass priority function call???
