@@ -93,14 +93,13 @@ class Deck:
         self.active_player.total_player_battlefield.append(self.stack[-1]) #assumig it resolves to battle field sorcery resolves will be to different location
         del self.stack[-1]
         
-
     def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed
         finality_of_priority = 0
-    
+
         while True:
             print(len(self.stack))
             card_to_play = None
-            print("This is the stack ; ", [i.name for i in self.stack])
+            print("This is the stack : ", [i.name for i in self.stack])
             print("Player", self.active_player.player_name, "to play:")
 
             for card in self.active_player.hand:
@@ -116,6 +115,7 @@ class Deck:
 
                 if finality_of_priority == len(self.players):
                     if len(self.stack) > 0:
+                        print("Card resolves: ", self.stack[-1].name, "/n")
                         Deck.resolve_card_from_stack(self) #make sure that active player is correct here to match the person who pLYAED IT BIG EJHFDWAJDWJKLADJKLA
                         self.active_player_index = start_player_index
                         self.active_player = self.players[self.active_player_index] #send it back to the person whose turn it is
@@ -132,17 +132,40 @@ class Deck:
 
                 for card in self.active_player.hand: ## okay well can I actually afford to play said card?    # depending on card type go and add to that part of the battlefield tooc
                     if name_of_card_to_play == card.id:
-                        card_to_play = card
-                        Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                        self.stack.append(card_to_play)
-                        break
+                        card_to_play = card ### can I actually play this card?
+
+                        if card_to_play.card_type != "instant": #maybe there is a faster way to do this
+                            if len(self.stack) > 0:
+                                print("Only instants can be played when stack is greater than 0")
+                                break
+
+                            elif self.active_player_index != start_player_index:
+                                print("Only the player whose turn it is can play non-instant spells")
+                                break
+
+                        elif card_to_play.card_type in ["Creature", "Artifact", "Enchantment", "Planeswalker"]: ### will add more here for combos where a card is multiple types
+                            ### PAYING FOR MANA HERE
+                            Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
+                            print("Card played: ", card_to_play, "/n")
+                            self.stack.append(card_to_play)
+                            break
+
+                        if card_to_play.card_type in ["BasicLand", "NonBasicLand"]:
+                            if self.active_player.land_for_turn == True:
+                                print("Land for turn already played")
+                                break
+                            
+                            else:
+                                self.active_player.land_for_turn = True
+                                Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
+                                print("Card played: ", card_to_play, "/n")
+                                self.active_player.total_player_battlefield.append(card_to_play) #assumig it resolves to battle field sorcery resolves will be to different location
+                                break
 
                 if card_to_play == None: #print an error only if the for loop cant find anything
                     print("error: " + name_of_card_to_play + " not in hand")
                     
              
-
-    
 
 class Player:
     def __init__(self, player_name, life_total):
@@ -150,6 +173,7 @@ class Player:
         self.player_name = player_name ### a,b,c,d to work with deck list, but eventually will be actual players name
         self.life_total = life_total
         self.hand = []
+        self.land_for_turn = False
 
         self.initialise_player_tablespace()
 
@@ -176,9 +200,14 @@ class TurnInteractions:
         self.every_turn_counter += 1
         self.exact_turn_counter = self.every_turn_counter % 4
 
+        self.land_for_turn = False
+
         Deck.draw(self.active_player)
-        for i in self.active_player.total_player_battlefield: ### fix
-            i.tapped = False
+
+        for card in self.active_player.total_player_battlefield: ### fix
+            card.tapped = False
+
+
 
     def mainphase1(self):
         Deck.play_card(self, self.active_player_index)
