@@ -93,12 +93,13 @@ class Deck:
         self.active_player.total_player_battlefield.append(self.stack[-1]) #assumig it resolves to battle field sorcery resolves will be to different location
         del self.stack[-1]
         
-
     def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed
         finality_of_priority = 0
+
         while True:
             print(len(self.stack))
             card_to_play = None
+            print("This is the stack ; ", [i.name for i in self.stack])
             print("Player", self.active_player.player_name, "to play:")
 
             for card in self.active_player.hand:
