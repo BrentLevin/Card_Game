@@ -99,13 +99,53 @@ class Deck:
         print("Name of card to play:", card_to_pay_for.name)
         print("  Cost of card:", card_to_pay_for.cost)
         print("")
+
         print("Cards that can pay for cast cost:")
         for card in self.active_player.total_player_battlefield:
             if card.mana_source == True and card.tapped == False:
-                print("  Name:", card.name, " Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
-                # need some sort of input here
-        print("\n")
-        #if cant pay then break
+                print("  Type", card.card_type, "Name:", card.id, "Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
+        
+        ### select cards that you want to use to pay, remove this from the list of options. then do like a cost remaining, and only when cost remaining = 0 then apply the tapped.
+        cost_coverred = {}
+        
+        while True:
+            cost_coverred = True # i dont like that the default for this is true
+            print("Current cost coverred", cost_coverred)
+            pay_with_card = input("pay_with_card [when done type 'complete', or reset with 'reset']")
+
+            if pay_with_card == "complete":
+                for key, value in card_to_pay_for.cost.items(): 
+                    if cost_coverred[key] < value:
+                        cost_coverred = False
+                        print("cost not yet coverred", "Problem: ", key, "Missing", value - cost_coverred) 
+
+                if cost_coverred == True:       
+                    for key, value in cost_coverred.items():
+                        self.active_player.mana_floating[key] += (value  - card_to_pay_for.cost.get(key, 0))  # you might tap for mana that is not part of the card cost i.e dual lands
+                    break       
+
+                else:
+                    continue      #just for readibility     
+
+            elif pay_with_card == "reset":
+                cost_coverred = {}
+
+            else:
+                for card in self.active_player.total_player_battlefield:
+                    if pay_with_card == card.name:
+                        for key, value in card.mana_producable.items():
+                            if key in cost_coverred: ### problem here is with floating mana....
+                                cost_coverred[key] += value
+                            else:
+                                cost_coverred[key] = value
+
+                    else:
+                        print("error: " + pay_with_card + " not in hand")
+                        break #break out of the for loop not the while loop
+
+        # need some sort of input here
+        print("")
+        #if cant pay then try again
 
     def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed, ### force turn to end when nothing else can be done
         finality_of_priority = 0
@@ -189,6 +229,12 @@ class Player:
         self.life_total = life_total
         self.hand = []
         self.land_for_turn = False
+        self.mana_floating = {"Blue": 0,
+                              "Black" : 0,
+                              "Green" : 0,
+                              "Red" : 0,
+                              "White" : 0
+                            }
 
         self.initialise_player_tablespace()
 
@@ -215,7 +261,13 @@ class TurnInteractions:
         self.every_turn_counter += 1
         self.exact_turn_counter = self.every_turn_counter % 4
 
-        self.land_for_turn = False
+        self.active_player.land_for_turn = False
+        self.active_player.mana_floating = {"Blue": 0,
+                              "Black" : 0,
+                              "Green" : 0,
+                              "Red" : 0,
+                              "White" : 0
+                              }
 
         Deck.draw(self.active_player)
 
