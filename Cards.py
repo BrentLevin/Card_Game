@@ -2,8 +2,8 @@ from Card_Objects import *
 
 restoration_angel = Creature(
     name = "Restoration Angel"
-    , colourless = 3
-    , coloured = ["white"] #maybe a hasmap
+    , colourless_cost = 3
+    , coloured_cost = ["white"] #maybe a hasmap
     , faction = "Angel"
     , power = 3
     , toughness = 4
@@ -14,8 +14,8 @@ restoration_angel = Creature(
 
 high_sentinels_of_arashin = Creature(
     name = "High Sentinels of Arashin"
-    , colourless = 3
-    , coloured = ["white"]
+    , colourless_cost = 3
+    , coloured_cost = ["white"]
     , faction = "Angel"
     , power = 3
     , toughness = 4
@@ -25,27 +25,32 @@ high_sentinels_of_arashin = Creature(
 
 forest = BasicLand(
     name = "Forest",
-    colour = "Green"
+    colour = "Green",
+    coloured = ["G"] #maybe a hash map
     )
 
 swamp = BasicLand(
     name = "Swamp",
-    colour = "Black"
+    colour = "Black",
+    coloured = ["Bla"] 
     )
 
 plains = BasicLand(
     name = "Plains",
-    colour = "White"
+    colour = "White",
+    coloured = ["W"] 
     )
 
 mountain = BasicLand(
     name = "Mountain",
-    colour = "Red"
+    colour = "Red",
+    coloured = ["R"] 
     )
 
 island = BasicLand(
     name = "Island",
-    colour = "Blue"
+    colour = "Blue",
+    coloured = ["Blu"] 
     )
 
 object_list = {

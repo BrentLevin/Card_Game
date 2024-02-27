@@ -90,14 +90,20 @@ class Deck:
         self.active_player = self.players[self.active_player_index] 
 
     def resolve_card_from_stack(self):
-        self.active_player.total_player_battlefield.append(self.stack[-1]) #assumig it resolves to battle field sorcery resolves will be to different location
-        del self.stack[-1]
+        card_to_play_from_stack = self.stack.pop()
+        self.active_player.total_player_battlefield.append(card_to_play_from_stack) #assumig it resolves to battle field sorcery resolves will be to different location
+        print("Card resolved from stack: ", card_to_play_from_stack.name , "/n")
+
+    def pay_for_card(self, card_to_pay_for):
+        print("\n", "Cards that can pay for cast cost")
+        for card in self.active_player.total_player_battlefield:
+            if card.mana_source == True and card.tapped == False:
+                print("name:", card.name, "   colourless:", card.colourless, "   coloured:", card.coloured) ### maybe I want to put something in here about what mana the card can play
         
-    def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed
+    def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed, ### force turn to end when nothing else can be done
         finality_of_priority = 0
 
         while True:
-            print(len(self.stack))
             card_to_play = None
             print("This is the stack : ", [i.name for i in self.stack])
             print("Player", self.active_player.player_name, "to play:")
@@ -115,7 +121,7 @@ class Deck:
 
                 if finality_of_priority == len(self.players):
                     if len(self.stack) > 0:
-                        print("Card resolves: ", self.stack[-1].name, "/n")
+                        print("Card resolves: ", self.stack[-1].name, "\n")
                         Deck.resolve_card_from_stack(self) #make sure that active player is correct here to match the person who pLYAED IT BIG EJHFDWAJDWJKLADJKLA
                         self.active_player_index = start_player_index
                         self.active_player = self.players[self.active_player_index] #send it back to the person whose turn it is
@@ -136,21 +142,23 @@ class Deck:
 
                         if card_to_play.card_type != "instant": #maybe there is a faster way to do this
                             if len(self.stack) > 0:
-                                print("Only instants can be played when stack is greater than 0")
+                                print("Only instants can be played when stack is greater than 0", "\n")
                                 break
 
                             elif self.active_player_index != start_player_index:
-                                print("Only the player whose turn it is can play non-instant spells")
+                                print("Only the player whose turn it is can play non-instant spells", "\n")
                                 break
 
-                        elif card_to_play.card_type in ["Creature", "Artifact", "Enchantment", "Planeswalker"]: ### will add more here for combos where a card is multiple types
+                        if card_to_play.card_type not in ["BasicLand", "NonBasicLand"]: ### will add more here for combos where a card is multiple types
                             ### PAYING FOR MANA HERE
+                            Deck.pay_for_card(self, card_to_play)
+                            ###
                             Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                            print("Card played: ", card_to_play, "/n")
+                            print("Card played to stack: ", card_to_play.name)
                             self.stack.append(card_to_play)
                             break
 
-                        if card_to_play.card_type in ["BasicLand", "NonBasicLand"]:
+                        else:
                             if self.active_player.land_for_turn == True:
                                 print("Land for turn already played")
                                 break
@@ -158,7 +166,7 @@ class Deck:
                             else:
                                 self.active_player.land_for_turn = True
                                 Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                                print("Card played: ", card_to_play, "/n")
+                                print("Card played: ", card_to_play.name)
                                 self.active_player.total_player_battlefield.append(card_to_play) #assumig it resolves to battle field sorcery resolves will be to different location
                                 break
 

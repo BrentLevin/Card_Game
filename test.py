@@ -251,11 +251,14 @@ import copy
 #     for i in test_list:
 #         print(i.name)
 
+# def main():
+#     for i in range(5):
+#         print(i)
+#         if i == 2:
+#             break
+
 def main():
-    for i in range(5):
-        print(i)
-        if i == 2:
-            break
+    print('\n')
 
 if __name__ == "__main__":
     main()
