@@ -21,3 +21,5 @@ fix passing
 resolving from the stack problems
 
 #124 why do i need to pass self inot the pass priority function call???
+
+problem with if a game is left running (for restart?)

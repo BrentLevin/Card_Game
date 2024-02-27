@@ -95,11 +95,18 @@ class Deck:
         print("Card resolved from stack: ", card_to_play_from_stack.name , "/n")
 
     def pay_for_card(self, card_to_pay_for):
-        print("\n", "Cards that can pay for cast cost")
+        print("\n")
+        print("Name of card to play:", card_to_pay_for.name)
+        print("  Cost of card:", card_to_pay_for.cost)
+        print("")
+        print("Cards that can pay for cast cost:")
         for card in self.active_player.total_player_battlefield:
             if card.mana_source == True and card.tapped == False:
-                print("name:", card.name, "   colourless:", card.colourless, "   coloured:", card.coloured) ### maybe I want to put something in here about what mana the card can play
-        
+                print("  Name:", card.name, " Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
+                # need some sort of input here
+        print("\n")
+        #if cant pay then break
+
     def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed, ### force turn to end when nothing else can be done
         finality_of_priority = 0
 
@@ -150,11 +157,11 @@ class Deck:
                                 break
 
                         if card_to_play.card_type not in ["BasicLand", "NonBasicLand"]: ### will add more here for combos where a card is multiple types
-                            ### PAYING FOR MANA HERE
+                            #PAYING FOR MANA HERE
                             Deck.pay_for_card(self, card_to_play)
-                            ###
+                            
                             Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                            print("Card played to stack: ", card_to_play.name)
+                            print("\n", "Card played to stack: ", card_to_play.name, "\n")
                             self.stack.append(card_to_play)
                             break
 
@@ -166,7 +173,7 @@ class Deck:
                             else:
                                 self.active_player.land_for_turn = True
                                 Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                                print("Card played: ", card_to_play.name)
+                                print("\n", "Card played: ", card_to_play.name, "\n")
                                 self.active_player.total_player_battlefield.append(card_to_play) #assumig it resolves to battle field sorcery resolves will be to different location
                                 break
 

@@ -3,8 +3,7 @@ from dataclasses import dataclass
 @dataclass
 class Creature:
         name: str
-        colourless_cost: int
-        coloured_cost: list
+        cost: dict
         faction: str
         power: int
         toughness: int
@@ -20,18 +19,16 @@ class Creature:
 @dataclass
 class BasicLand:
         name: str
-        coloured: list
-        colour: list
+        mana_producable: dict
+        colour: str #idk if we need this
         card_type: str = "BasicLand"
         mana_source: bool = True
         tapped: bool = False
-        colourless: int = 0
 
 @dataclass
 class NonBasicLand:
         name: str
-        colourless: int
-        coloured: list
+        mana_producable: dict
         faction: str
         tapped: bool
         card_type: str = "NonBasicLand"
