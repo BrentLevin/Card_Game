@@ -97,42 +97,50 @@ class Deck:
     def pay_for_card(self, card_to_pay_for):
         print("\n")
         print("Name of card to play:", card_to_pay_for.name)
-        print("  Cost of card:", card_to_pay_for.cost)
-        print("")
+        print("  Cost of card:", card_to_pay_for.cost, "\n")
 
         print("Cards that can pay for cast cost:")
         for card in self.active_player.total_player_battlefield:
             if card.mana_source == True and card.tapped == False:
-                print("  Type", card.card_type, "Name:", card.id, "Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
+                print("  Type:", card.card_type, " Name:", card.id, " Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
         
         ### select cards that you want to use to pay, remove this from the list of options. then do like a cost remaining, and only when cost remaining = 0 then apply the tapped.
         cost_coverred = {}
         
         while True:
-            cost_coverred = True # i dont like that the default for this is true
-            print("Current cost coverred", cost_coverred)
-            pay_with_card = input("pay_with_card [when done type 'complete', or reset with 'reset']")
+            not_yet_coverred = True # i dont like that the default for this is true
+            print("\n\nCost of card:", card_to_pay_for.cost)
+            print("Current cost coverred", cost_coverred,"\n\n")
+
+            pay_with_card = input("pay_with_card [when done type 'complete', or reset with 'reset', or unselect card with 'deselect']:    ") #maybe I can do like a help command here for all the options????
 
             if pay_with_card == "complete":
                 for key, value in card_to_pay_for.cost.items(): 
                     if cost_coverred[key] < value:
-                        cost_coverred = False
+                        not_yet_coverred = False
                         print("cost not yet coverred", "Problem: ", key, "Missing", value - cost_coverred) 
 
-                if cost_coverred == True:       
+                if not_yet_coverred == True:       
                     for key, value in cost_coverred.items():
                         self.active_player.mana_floating[key] += (value  - card_to_pay_for.cost.get(key, 0))  # you might tap for mana that is not part of the card cost i.e dual lands
-                    break       
+                    break      
 
                 else:
                     continue      #just for readibility     
+            
+            elif pay_with_card == "exit": #to quit the game
+                exit()
+
+            elif pay_with_card == "deselect":
+                cost_coverred = {}
+                return None
 
             elif pay_with_card == "reset":
                 cost_coverred = {}
 
             else:
                 for card in self.active_player.total_player_battlefield:
-                    if pay_with_card == card.name:
+                    if pay_with_card == card.id:
                         for key, value in card.mana_producable.items():
                             if key in cost_coverred: ### problem here is with floating mana....
                                 cost_coverred[key] += value
@@ -140,19 +148,18 @@ class Deck:
                                 cost_coverred[key] = value
 
                     else:
-                        print("error: " + pay_with_card + " not in hand")
+                        print("error: " + pay_with_card + " not on player field")
                         break #break out of the for loop not the while loop
+            
+        return card_to_pay_for
 
-        # need some sort of input here
-        print("")
-        #if cant pay then try again
 
     def play_card(self, start_player_index): #need constraints to maintain cards being played can actually be played whether it be at instant or sorcery speed, ### force turn to end when nothing else can be done
         finality_of_priority = 0
 
         while True:
             card_to_play = None
-            print("This is the stack : ", [i.name for i in self.stack])
+            print("\nThis is the stack : ", [i.name for i in self.stack])
             print("Player", self.active_player.player_name, "to play:")
 
             for card in self.active_player.hand:
@@ -189,20 +196,21 @@ class Deck:
 
                         if card_to_play.card_type != "instant": #maybe there is a faster way to do this
                             if len(self.stack) > 0:
-                                print("Only instants can be played when stack is greater than 0", "\n")
+                                print("\nOnly instants can be played when stack is greater than 0", "\n")
                                 break
 
                             elif self.active_player_index != start_player_index:
-                                print("Only the player whose turn it is can play non-instant spells", "\n")
+                                print("\nOnly the player whose turn it is can play non-instant spells", "\n")
                                 break
 
                         if card_to_play.card_type not in ["BasicLand", "NonBasicLand"]: ### will add more here for combos where a card is multiple types
-                            #PAYING FOR MANA HERE
-                            Deck.pay_for_card(self, card_to_play)
+                            card_to_play_paid = Deck.pay_for_card(self, card_to_play) #what if i cant pay for the card?
                             
-                            Deck.remove_card_from_list(self, card_to_play, self.active_player.hand)
-                            print("\n", "Card played to stack: ", card_to_play.name, "\n")
-                            self.stack.append(card_to_play)
+                            if card_to_play_paid != None:
+                                Deck.remove_card_from_list(self, card_to_play_paid, self.active_player.hand)
+                                print("\n", "Card played to stack: ", card_to_play_paid.name, "\n")
+                                self.stack.append(card_to_play_paid)
+
                             break
 
                         else:
@@ -229,7 +237,8 @@ class Player:
         self.life_total = life_total
         self.hand = []
         self.land_for_turn = False
-        self.mana_floating = {"Blue": 0,
+        self.mana_floating = {"Colourless": 0,
+                              "Blue": 0,
                               "Black" : 0,
                               "Green" : 0,
                               "Red" : 0,
@@ -262,7 +271,8 @@ class TurnInteractions:
         self.exact_turn_counter = self.every_turn_counter % 4
 
         self.active_player.land_for_turn = False
-        self.active_player.mana_floating = {"Blue": 0,
+        self.active_player.mana_floating = {"Colourless": 0,
+                              "Blue": 0,
                               "Black" : 0,
                               "Green" : 0,
                               "Red" : 0,

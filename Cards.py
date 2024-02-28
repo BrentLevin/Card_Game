@@ -36,7 +36,7 @@ swamp = BasicLand(
 plains = BasicLand(
     name = "Plains",
     colour = "White",
-    mana_producable = {"White" : 1}
+    mana_producable = {"Colourless": 3, "White" : 1} ### FIXXX
     )
 
 mountain = BasicLand(

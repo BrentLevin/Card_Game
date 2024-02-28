@@ -257,8 +257,18 @@ import copy
 #         if i == 2:
 #             break
 
+# def main():
+#     print('\n')
+
 def main():
-    print('\n')
+    while True:
+        for i in range(10):
+            if i < 6:
+                print(i)
+
+            else:
+                break
+        print("hold")
 
 if __name__ == "__main__":
     main()
