@@ -95,6 +95,9 @@ class Deck:
         print("Card resolved from stack: ", card_to_play_from_stack.name , "/n")
 
     def pay_for_card(self, card_to_pay_for):
+        cost_coverred = {}
+        cards_used = []
+
         print("\n")
         print("Name of card to play:", card_to_pay_for.name)
         print("  Cost of card:", card_to_pay_for.cost, "\n")
@@ -105,10 +108,9 @@ class Deck:
                 print("  Type:", card.card_type, " Name:", card.id, " Producable mana:", card.mana_producable) ### maybe I want to put something in here about what mana the card can play
         
         ### select cards that you want to use to pay, remove this from the list of options. then do like a cost remaining, and only when cost remaining = 0 then apply the tapped.
-        cost_coverred = {}
-        
+
         while True:
-            not_yet_coverred = True # i dont like that the default for this is true
+            cost_now_coverred = True # i dont like that the default for this is true
             print("\n\nCost of card:", card_to_pay_for.cost)
             print("Current cost coverred", cost_coverred,"\n\n")
 
@@ -116,13 +118,18 @@ class Deck:
 
             if pay_with_card == "complete":
                 for key, value in card_to_pay_for.cost.items(): 
-                    if cost_coverred[key] < value:
-                        not_yet_coverred = False
+                    if cost_coverred[key] < value: #### something about using coloured to pay for the colourless cost....
+                        cost_now_coverred = False
                         print("cost not yet coverred", "Problem: ", key, "Missing", value - cost_coverred) 
 
-                if not_yet_coverred == True:       
+                if cost_now_coverred == True:       
                     for key, value in cost_coverred.items():
                         self.active_player.mana_floating[key] += (value  - card_to_pay_for.cost.get(key, 0))  # you might tap for mana that is not part of the card cost i.e dual lands
+                    
+                    for card_used in cards_used:
+                        for card in self.active_player.total_player_battledfield:
+                            if card_used == card.id:
+                                card.tapped = True
                     break      
 
                 else:
@@ -133,10 +140,12 @@ class Deck:
 
             elif pay_with_card == "deselect":
                 cost_coverred = {}
+                cards_used = []
                 return None
 
             elif pay_with_card == "reset":
                 cost_coverred = {}
+                cards_used = []
 
             else:
                 for card in self.active_player.total_player_battlefield:
@@ -146,6 +155,8 @@ class Deck:
                                 cost_coverred[key] += value
                             else:
                                 cost_coverred[key] = value
+
+                        cards_used.append(pay_with_card)
 
                     else:
                         print("error: " + pay_with_card + " not on player field")
